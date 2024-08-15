@@ -44,9 +44,8 @@ jobs:
           aws configure set aws_secret_access_key << pipeline.parameters.AWS_SECRET_ACCESS_KEY >>
           aws configure set default.region << pipeline.parameters.AWS_DEFAULT_REGION >>
 
-          Cluster = $(aws ecs list-clusters --region << pipeline.parameters.AWS_DEFAULT_REGION >>)
+          aws ecs list-clusters --region << pipeline.parameters.AWS_DEFAULT_REGION >>
 
-          echo "Cluster name $Cluster"
           echo "<< pipeline.parameters.uw2region >>"
           echo "<< pipeline.parameters.ue2region >>"
           echo "<< pipeline.parameters.cluster_name >>"
