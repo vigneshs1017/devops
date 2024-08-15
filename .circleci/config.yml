@@ -44,7 +44,7 @@ jobs:
           aws configure set aws_secret_access_key << pipeline.parameters.AWS_SECRET_ACCESS_KEY >>
           
           CLUSTER_NAME=$(aws ecs list-clusters --region "<< pipeline.parameters.uw2region >>" --query "clusterArns[?contains(@, '<< pipeline.parameters.cluster_name >>')]" --output text | awk -F'/' '{print $NF}')
-          SERVICE_NAMES=$(aws ecs list-services --cluster $CLUSTER_NAME --region "<< pipeline.parameters.uw2region >>" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
+          SERVICE_NAMES=$(aws ecs list-services --region "<< pipeline.parameters.uw2region >>" --cluster $CLUSTER_NAME --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
           echo "Cluster name $CLUSTER_NAME"
           echo "Application Service name $SERVICE_NAMES"
           
