@@ -47,9 +47,9 @@ jobs:
           echo "inside run $REGION"
           
           CLUSTER_NAME=$(aws ecs list-clusters --region $REGION --query "clusterArns[?contains(@, "<< pipeline.parameters.cluster_name >>")]" --output text | awk -F'/' '{print $NF}')
-          SERVICE_NAMES=$(aws ecs list-services --cluster $CLUSTER_NAME --region $REGION --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
+          #SERVICE_NAMES=$(aws ecs list-services --cluster $CLUSTER_NAME --region $REGION --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
           echo "Cluster name = $CLUSTER_NAME"
-          echo "Application Service name = $SERVICE_NAMES"
+          #echo "Application Service name = $SERVICE_NAMES"
           
           #aws ecs list-clusters --region << pipeline.parameters.AWS_DEFAULT_REGION >>
 
