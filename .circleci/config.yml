@@ -48,9 +48,9 @@ jobs:
           echo "Cluster name $CLUSTER_NAME"
           echo "Application Service name $SERVICE_NAMES"
           aws ecs update-service \
-              --cluster $CLUSTER_NAME \
-              --service $SERVICE_NAME \
-              --region "${REGION}" \
+              --cluster ${CLUSTER_NAME} \
+              --service ${SERVICE_NAME} \
+              --region ${REGION} \
               --force-new-deployment
 
           
