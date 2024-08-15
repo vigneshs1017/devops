@@ -11,7 +11,7 @@ parameters:
     default: "us-west-2"
   cluster_name:
      type: string
-     default: "promo"
+     default: "devops"
   AWS_ACCESS_KEY_ID: 
      type: string
      default: "AKIAXYKJQNPXKPWMPNPX"
