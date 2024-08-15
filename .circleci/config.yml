@@ -14,13 +14,10 @@ parameters:
      default: "devops"
   AWS_ACCESS_KEY_ID: 
      type: string
-     default: "AKIAXYKJQNPXKPWMPNPX"
+     default: "AKIA4MTWI3YQSVBNAGFO"
   AWS_SECRET_ACCESS_KEY:
      type: string
-     default: "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"
-  AWS_DEFAULT_REGION: 
-     type: string
-     default: "us-east-1"
+     default: "/8YUFUhM4XaIn24yr8TMDpZSviiP3ZeAtNVkWz6X"
 
 
 # Define a job to be invoked later in a workflow.
