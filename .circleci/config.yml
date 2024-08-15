@@ -30,10 +30,10 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
-      - run:
-        echo "<< pipeline.parameters.cluster_name >>"
-        echo "<< pipeline.parameters.ue2region >>"
-        echo "<< pipeline.parameters.cluster_name >>"
+      - run: |
+          echo "<< pipeline.parameters.cluster_name >>"
+          echo "<< pipeline.parameters.ue2region >>"
+          echo "<< pipeline.parameters.cluster_name >>"
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
