@@ -5,7 +5,7 @@ version: 2.1
 parameters:
   ue2region:
     type: string
-    default: "us-east-2"
+    default: "us-east-1"
   uw2region:
     type: string
     default: "us-west-2"
@@ -44,6 +44,11 @@ jobs:
           SERVICE_NAMES=$(aws ecs list-services --region "<< pipeline.parameters.uw2region >>" --cluster "${CLUSTER_NAME}" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
           echo "Cluster name $CLUSTER_NAME"
           echo "Application Service name $SERVICE_NAMES"
+
+          CLUSTER_NAME=$(aws ecs list-clusters --region "<< pipeline.parameters.ue2region >>" --query "clusterArns[?contains(@, '<< pipeline.parameters.cluster_name >>')]" --output text | awk -F'/' '{print $NF}')
+          SERVICE_NAMES=$(aws ecs list-services --region "<< pipeline.parameters.ue2region >>" --cluster "${CLUSTER_NAME}" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
+          echo "Cluster name in us-east-1 region $CLUSTER_NAME"
+          echo "Application Service name in us-east-1 $SERVICE_NAMES"
           
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
