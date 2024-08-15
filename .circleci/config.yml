@@ -31,7 +31,7 @@ jobs:
       # Checkout the code as the first step.
       - checkout
       - run: |
-          echo "<< pipeline.parameters.cluster_name >>"
+          echo "<< pipeline.parameters.uw2region >>"
           echo "<< pipeline.parameters.ue2region >>"
           echo "<< pipeline.parameters.cluster_name >>"
 
