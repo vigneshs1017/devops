@@ -42,20 +42,12 @@ jobs:
       - run: |
           aws configure set aws_access_key_id << pipeline.parameters.AWS_ACCESS_KEY_ID >>
           aws configure set aws_secret_access_key << pipeline.parameters.AWS_SECRET_ACCESS_KEY >>
-          #aws configure set default.region << pipeline.parameters.AWS_DEFAULT_REGION >>
-          #REGION= "<< pipeline.parameters.uw2region >>"
           
           CLUSTER_NAME=$(aws ecs list-clusters --region "<< pipeline.parameters.uw2region >>" --query "clusterArns[?contains(@, '<< pipeline.parameters.cluster_name >>')]" --output text | awk -F'/' '{print $NF}')
-          SERVICE_NAMES=$(aws ecs list-services --cluster ${CLUSTER_NAME} --region "<< pipeline.parameters.uw2region >>" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
+          SERVICE_NAMES=$(aws ecs list-services --cluster $CLUSTER_NAME --region "<< pipeline.parameters.uw2region >>" --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
           echo "Cluster name $CLUSTER_NAME"
           echo "Application Service name $SERVICE_NAMES"
           
-          #aws ecs list-clusters --region << pipeline.parameters.AWS_DEFAULT_REGION >>
-
-          #echo "<< pipeline.parameters.uw2region >>"
-          #echo "<< pipeline.parameters.ue2region >>"
-          #echo "<< pipeline.parameters.cluster_name >>"
-
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
