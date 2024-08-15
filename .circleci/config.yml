@@ -13,10 +13,13 @@ parameters:
      type: string
      default: "promo"
   AWS_ACCESS_KEY_ID: 
+     type: string
      default: "AKIAXYKJQNPXKPWMPNPX"
-  AWS_SECRET_ACCESS_KEY: 
+  AWS_SECRET_ACCESS_KEY:
+     type: string
      default: "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"
   AWS_DEFAULT_REGION: 
+     type: string
      default: "us-east-1"
 
 
