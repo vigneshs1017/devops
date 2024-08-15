@@ -12,6 +12,12 @@ parameters:
   cluster_name:
      type: string
      default: "promo"
+  AWS_ACCESS_KEY_ID: 
+     default: "AKIAXYKJQNPXKPWMPNPX"
+  AWS_SECRET_ACCESS_KEY: 
+     default: "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"
+  AWS_DEFAULT_REGION: 
+     default: "us-east-1"
 
 
 # Define a job to be invoked later in a workflow.
@@ -23,7 +29,7 @@ jobs:
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/base:current
+      - image: cimg/aws:2023.12
 
     # Add steps to the job
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
@@ -31,6 +37,13 @@ jobs:
       # Checkout the code as the first step.
       - checkout
       - run: |
+          aws configure set aws_access_key_id << pipeline.parameters.AWS_ACCESS_KEY_ID >>
+          aws configure set aws_secret_access_key << pipeline.parameters.AWS_SECRET_ACCESS_KEY >>
+          aws configure set default.region << pipeline.parameters.AWS_DEFAULT_REGION >>
+
+          Cluster = $(aws ecs list-clusters --region << pipeline.parameters.AWS_DEFAULT_REGION >>)
+
+          echo "Cluster name $Cluster"
           echo "<< pipeline.parameters.uw2region >>"
           echo "<< pipeline.parameters.ue2region >>"
           echo "<< pipeline.parameters.cluster_name >>"
