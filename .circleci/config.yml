@@ -43,11 +43,11 @@ jobs:
           aws configure set aws_access_key_id << pipeline.parameters.AWS_ACCESS_KEY_ID >>
           aws configure set aws_secret_access_key << pipeline.parameters.AWS_SECRET_ACCESS_KEY >>
           aws configure set default.region << pipeline.parameters.AWS_DEFAULT_REGION >>
-          REGION="{{ pipeline.parameters.uw2region }}"
+          REGION= << pipeline.parameters.uw2region >>
           echo "inside run $REGION"
           
-          CLUSTER_NAME=$(aws ecs list-clusters --region $REGION --query "clusterArns[?contains(@, '${cluster_name}')]" --output text | awk -F'/' '{print $NF}')
-          SERVICE_NAMES=$(aws ecs list-services --cluster $cluster_name --region $REGION --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
+          CLUSTER_NAME=$(aws ecs list-clusters --region $REGION --query "clusterArns[?contains(@, << pipeline.parameters.cluster_name >>)]" --output text | awk -F'/' '{print $NF}')
+          SERVICE_NAMES=$(aws ecs list-services --cluster $CLUSTER_NAME --region $REGION --query "serviceArns[]" --output text | tr '\t' '\n' | awk -F'/' '{print $NF}' | grep -v "dd")
           echo "Cluster name = $CLUSTER_NAME"
           echo "Application Service name = $SERVICE_NAMES"
           
