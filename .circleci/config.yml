@@ -10,7 +10,6 @@ jobs:
     resource_class: medium
     steps:
       - checkout  
-      - docker/check
       - docker/build:
           image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
           tag: 0.1.<< pipeline.number >>
@@ -26,6 +25,5 @@ jobs:
           tag: 0.1.<< pipeline.number >>
 
 workflows:
-  build:
     jobs:
-     - scan_build_docker_image
+    - scan_build_docker_image
