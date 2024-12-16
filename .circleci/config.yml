@@ -10,11 +10,14 @@ jobs:
     resource_class: medium
     steps:
       - checkout  
-      - docker/build:
-          image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
+      - aws-ecr/build-image:
+          ecr-login: true
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPO
           tag: 0.1.<< pipeline.number >>
       - snyk/scan:
-          docker-image-name: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME:0.1.<< pipeline.number >>
+          docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
           fail-on-issues: false
           monitor-on-build: false
           severity-threshold: high
