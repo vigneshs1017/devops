@@ -17,9 +17,9 @@ jobs:
           tag: 0.1.<< pipeline.number >>
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
-          fail-on-issues: false
+          fail-on-issues: true
           monitor-on-build: false
-          severity-threshold: high
+          severity-threshold: cirtical
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
       - aws-ecr/push-image:
