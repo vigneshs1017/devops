@@ -1,0 +1,31 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@7.2.0
+  snyk: snyk/snyk@0.1.0
+
+jobs:
+ scan_build_docker_image:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: medium
+    steps:
+      - checkout  
+      - docker/check
+      - docker/build:
+          image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
+          tag: 0.1.<< pipeline.number >>
+      - snyk/scan:
+          docker-image-name: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME:0.1.<< pipeline.number >>
+          fail-on-issues: false
+          monitor-on-build: false
+          severity-threshold: high
+          target-file: Dockerfile
+          token-variable: SNYK_TOKEN
+      - docker/push:
+          image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
+          tag: 0.1.<< pipeline.number >>
+
+workflows:
+  build:
+    jobs:
+     - scan_build_docker_image
