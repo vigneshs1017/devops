@@ -35,6 +35,6 @@ workflows:
           type: approval
           requires:
             - snyk/scan
-      - aws-ecr/push-image:
+    - aws-ecr/push-image:
           requires:
             - hold
