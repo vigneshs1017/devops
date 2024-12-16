@@ -6,7 +6,7 @@ orbs:
 jobs:
  scan_build_docker_image:
     machine:
-      image: ubuntu-2204:edge
+      image: ubuntu-2004:202101-01
     steps:
       - checkout
       - aws-ecr/build-image:
