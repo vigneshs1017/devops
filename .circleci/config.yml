@@ -36,5 +36,5 @@ workflows:
           requires:
             - snyk/scan
     - aws-ecr/push-image
-      requires:
+            requires:
             - hold
