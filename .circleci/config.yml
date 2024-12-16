@@ -25,5 +25,6 @@ jobs:
           tag: 0.1.<< pipeline.number >>
 
 workflows:
+   build:
     jobs:
     - scan_build_docker_image
