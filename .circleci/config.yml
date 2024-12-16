@@ -9,7 +9,7 @@ jobs:
       image: ubuntu-2004:202101-01
     resource_class: medium
     steps:
-      - checkout  
+      - checkout
       - aws-ecr/build-image:
           ecr-login: true
           region: AWS_REGION
@@ -23,10 +23,10 @@ jobs:
           severity-threshold: high
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
-     - aws-ecr/push-image:
+      - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
-          tag: 0.1.<< pipeline.number >>
+          tag: 0.1.<< pipeline.number >>     
 
 workflows:
    build:
