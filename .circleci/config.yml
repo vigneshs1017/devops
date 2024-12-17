@@ -36,7 +36,7 @@ jobs:
           ecr-login: true
           region: AWS_REGION
           account-url: AWS_ECR_ACCOUNT_URL
-          repo: << pipeline.parameters.repo >>
+          repo: $AWS_ECR_REPO
           tag: 0.1.<< pipeline.number >>  
 
 workflows:
