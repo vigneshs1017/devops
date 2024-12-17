@@ -30,7 +30,7 @@ jobs:
 workflows:
    build:
     jobs:
-      - scan_build_docker_image
+      - scan_build_docker_image:
           filters:
             branches:
               only:
