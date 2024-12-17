@@ -40,6 +40,10 @@ workflows:
             branches:
               only:
                 - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+                
       - scan_build_docker_image:
           fail_if_vul: true
           filters:
@@ -49,3 +53,6 @@ workflows:
                 - acc
                 - main
                 - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
