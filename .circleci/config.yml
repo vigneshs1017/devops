@@ -7,7 +7,7 @@ jobs:
   scan_build_docker_image:
     parameters:
       fail_if_vul:
-        type: bool
+        type: boolean
         default: false
     machine:
       image: ubuntu-2204:edge
