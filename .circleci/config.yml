@@ -2,15 +2,9 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
-  
-executors:
-  default-machine:
-    machine:
-      image: ubuntu-2204:edge
 
 jobs:
- scan_build_docker_image:
-    executor: default-machine
+ scan_build_docker_image_not_to_fail:
     machine:
       image: ubuntu-2204:edge
     steps:
@@ -28,24 +22,47 @@ jobs:
           severity-threshold: critical
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
-          
- push_to_ecr:
-    executor: default-machine
-    steps:
       - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
           tag: 0.1.<< pipeline.number >>  
   
-
+scan_build_docker_image_to_fail:
+    machine:
+      image: ubuntu-2204:edge
+    steps:
+      - checkout
+      - aws-ecr/build-image:
+          ecr-login: true
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPO
+          tag: 0.1.<< pipeline.number >>
+      - snyk/scan:
+          docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
+          fail-on-issues: true
+          monitor-on-build: false
+          severity-threshold: critical
+          target-file: Dockerfile
+          token-variable: SNYK_TOKEN
+      - aws-ecr/push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPO
+          tag: 0.1.<< pipeline.number >>  
 workflows:
    build:
     jobs:
-    - scan_build_docker_image
-    - hold:
-          type: approval
-          requires:
-            - scan_build_docker_image
-    - push_to_ecr:
-          requires:
-            - hold
+    - scan_build_docker_image_not_to_fail
+    filters:
+      branches:
+        only:
+          - dev
+    - scan_build_docker_image_to_fail
+    filters:
+      branches:
+        only:
+          - stage
+          - acc
+          - main
+          - prod
+          
