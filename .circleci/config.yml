@@ -4,7 +4,7 @@ orbs:
   snyk: snyk/snyk@1.4.0
 
 jobs:
- scan_build_docker_image:
+  scan_build_docker_image:
     machine:
       image: ubuntu-2204:edge
     steps:
@@ -28,7 +28,7 @@ jobs:
           tag: 0.1.<< pipeline.number >>  
   
 workflows:
-   build:
+  build:
     jobs:
       - scan_build_docker_image:
           fail: 'false' 
@@ -36,7 +36,7 @@ workflows:
             branches:
               only:
                 - dev
-     - scan_build_docker_image:
+      - scan_build_docker_image:
           fail: 'true'
           filters:
             branches:
