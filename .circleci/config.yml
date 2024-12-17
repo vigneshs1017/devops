@@ -3,13 +3,12 @@ orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
 
-parameters:
-  fail_if_vul:
-    type: string
-    default: "false"
-
 jobs:
   scan_build_docker_image:
+    parameters:
+      fail_if_vul:
+        type: string
+        default: "false"
     machine:
       image: ubuntu-2204:edge
     steps:
@@ -36,13 +35,13 @@ workflows:
   build:
     jobs:
       - scan_build_docker_image:
-          fail_if_vul: 'false' 
+          fail_if_vul: "false"
           filters:
             branches:
               only:
                 - dev
       - scan_build_docker_image:
-          fail_if_vul: 'true'
+          fail_if_vul: "true"
           filters:
             branches:
               only:
