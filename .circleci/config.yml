@@ -87,7 +87,7 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - scan_application
+            - lower
 
       - scan_build_docker_image:
           fail_if_vul: true
@@ -102,4 +102,4 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - scan_application
+            - pre-prod
