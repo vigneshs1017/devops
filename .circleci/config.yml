@@ -33,7 +33,6 @@ jobs:
     executor: default-machine
     steps:
       - aws-ecr/push-image:
-          ecr-login: true
           region: AWS_REGION
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
