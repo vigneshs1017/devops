@@ -51,7 +51,6 @@ scan_build_docker_image_to_fail:
           tag: 0.1.<< pipeline.number >>  
           
 workflows:
-  build:
     jobs:
       - scan_build_docker_image_not_to_fail
       - scan_build_docker_image_to_fail
