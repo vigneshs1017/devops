@@ -83,8 +83,6 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
-          requires:
-            - scan_application
                 
       - scan_build_docker_image:
           fail_if_vul: true
@@ -98,5 +96,3 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
-          requires:
-            - scan_applications
