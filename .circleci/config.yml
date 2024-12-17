@@ -31,4 +31,11 @@ workflows:
    build:
     jobs:
       - scan_build_docker_image
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
         
