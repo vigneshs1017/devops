@@ -53,16 +53,16 @@ workflows:
    build:
      jobs:
       - scan_build_docker_image_not_to_fail
-        filters:
-          branches:
-            only:
-             - dev
+         filters:
+           branches:
+             only:
+              - dev
       - scan_build_docker_image_to_fail
-        filters:
-          branches:
-            only:
-             - stage
-             - acc
-             - main
-             - prod
+         filters:
+           branches:
+             only:
+              - stage
+              - acc
+              - main
+              - prod
           
