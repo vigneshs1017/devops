@@ -2,8 +2,26 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
+  node: circleci/node@4.2.0
 
 jobs:
+  scan_application:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+    docker:
+    - image: cimg/node:14.16.0
+    steps:
+    - checkout
+    - run:
+        name: Sync code for application
+        command: npm install
+    - snyk/scan:
+        fail-on-issues: << parameters.fail_if_vul >>
+        monitor-on-build: false
+        severity-threshold: critical
+
   scan_build_docker_image:
     parameters:
       fail_if_vul:
@@ -34,6 +52,31 @@ jobs:
 workflows:
   build:
     jobs:
+      - scan_application:
+          name: Application-Scan-Pre-Prods
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
+      - scan_application:
+          name: Application-Scan-Development
+          fail_if_vul: false
+          filters:
+            branches:
+              only:
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
       - scan_build_docker_image:
           fail_if_vul: false
           filters:
@@ -43,7 +86,9 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
-                
+          requires:
+            - Application-Scan-Development
+
       - scan_build_docker_image:
           fail_if_vul: true
           filters:
@@ -56,3 +101,5 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+          requires:
+            - Application-Scan-Pre-Prods

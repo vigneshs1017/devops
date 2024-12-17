@@ -1,3 +1,8 @@
-FROM nginx:latest
+FROM node:14.17.5
 
-COPY index.html /usr/share/nignx/html
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+COPY . .
+CMD ["node","app.js"]
+EXPOSE 3005
