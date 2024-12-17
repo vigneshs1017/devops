@@ -53,6 +53,7 @@ workflows:
   build:
     jobs:
       - scan_application:
+          name: pre-prod
           fail_if_vul: true
           filters:
             branches:
@@ -66,6 +67,7 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
 
       - scan_application:
+          name: lower
           fail_if_vul: false
           filters:
             branches:
