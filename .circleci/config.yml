@@ -4,13 +4,12 @@ orbs:
   snyk: snyk/snyk@1.4.0
   node: circleci/node@4.2.0
 
-parameters:
-  fail_if_vul:
-    type: boolean
-    default: false
-
 jobs:
   scan_application:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
     docker:
     - image: cimg/node:14.16.0
     steps:
@@ -23,6 +22,10 @@ jobs:
         monitor-on-build: false
 
   scan_build_docker_image:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
     machine:
       image: ubuntu-2204:edge
     steps:
@@ -48,6 +51,29 @@ jobs:
 workflows:
   build:
     jobs:
+      - scan_application:
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
+      - scan_application:
+          fail_if_vul: false
+          filters:
+            branches:
+              only:
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
       - scan_build_docker_image:
           fail_if_vul: false
           filters:
@@ -57,6 +83,8 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+          requires:
+            - scan_application
                 
       - scan_build_docker_image:
           fail_if_vul: true
@@ -70,26 +98,5 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
-
-      - scan_application:
-          fail_if_vul: true
-          filters:
-            branches:
-              only:
-                - stage
-                - acc
-                - main
-                - prod
-            tags:
-              ignore:
-                - /v\d+\.\d+\.\d+$/
-
-      - scan_application:
-          fail_if_vul: false
-          filters:
-            branches:
-              only:
-                - dev
-            tags:
-              ignore:
-                - /v\d+\.\d+\.\d+$/
+          requires:
+            - scan_applications
