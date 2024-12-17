@@ -51,17 +51,18 @@ scan_build_docker_image_to_fail:
           tag: 0.1.<< pipeline.number >>  
 workflows:
    build:
-    - scan_build_docker_image_not_to_fail
-    filters:
-      branches:
-        only:
-          - dev
-    - scan_build_docker_image_to_fail
-    filters:
-      branches:
-        only:
-          - stage
-          - acc
-          - main
-          - prod
+     jobs:
+      - scan_build_docker_image_not_to_fail
+        filters:
+          branches:
+            only:
+             - dev
+      - scan_build_docker_image_to_fail
+        filters:
+          branches:
+            only:
+             - stage
+             - acc
+             - main
+             - prod
           
