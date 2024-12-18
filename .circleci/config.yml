@@ -78,6 +78,7 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
 
       - scan_build_docker_image:
+          name: Image Scan in Lower
           fail_if_vul: false
           filters:
             branches:
@@ -90,6 +91,7 @@ workflows:
             - Application-Scan-Development
 
       - scan_build_docker_image:
+          name: Image Scan In Pre Prod/Production
           fail_if_vul: true
           filters:
             branches:
