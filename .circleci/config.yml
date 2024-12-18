@@ -20,7 +20,7 @@ jobs:
     - snyk/scan:
         fail-on-issues: << parameters.fail_if_vul >>
         monitor-on-build: false
-        severity-threshold: critical
+        severity-threshold: critical,high
 
   scan_build_docker_image:
     parameters:
@@ -41,7 +41,7 @@ jobs:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
           monitor-on-build: false
-          severity-threshold: critical
+          severity-threshold: critical,high
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
       - aws-ecr/push-image:
