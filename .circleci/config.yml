@@ -11,7 +11,7 @@ jobs:
         type: boolean
         default: false
     docker:
-    - image: cimg/node:14.16.0
+    - image: cimg/node:lts
     steps:
     - checkout
     - run:
@@ -21,14 +21,15 @@ jobs:
         fail-on-issues: << parameters.fail_if_vul >>
         monitor-on-build: false
         severity-threshold: critical
+        token-variable: SNYK_TOKEN
 
   scan_build_docker_image:
     parameters:
       fail_if_vul:
         type: boolean
         default: false
-    machine:
-      image: ubuntu-2204:edge
+    docker:
+        - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
       - aws-ecr/build-image:
