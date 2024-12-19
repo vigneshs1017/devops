@@ -2,7 +2,6 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
-  node: circleci/node@4.2.0
 
 jobs:
   scan_application:
@@ -16,11 +15,12 @@ jobs:
     - checkout
     - run:
         name: Sync code for application
-        command: npm install
+        command: npm ci
     - snyk/scan:
         fail-on-issues: << parameters.fail_if_vul >>
         monitor-on-build: false
         severity-threshold: critical
+        monitor-on-build: true
         token-variable: SNYK_TOKEN
 
   scan_build_docker_image:
