@@ -32,6 +32,7 @@ jobs:
         - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - setup_remote_docker
       - aws-ecr/build-image:
           ecr-login: true
           region: AWS_REGION
