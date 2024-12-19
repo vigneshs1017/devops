@@ -15,12 +15,19 @@ jobs:
     - checkout
     - run:
         name: Sync code for application
-        command: npm ci
+        command: npm install
     - snyk/scan:
-        fail-on-issues: << parameters.fail_if_vul >>
-        monitor-on-build: false
-        severity-threshold: critical
-        token-variable: SNYK_TOKEN
+        token-variable: SNYK_TOKEN                          
+        severity-threshold: high                                  
+        fail-on-issues: << parameters.fail_if_vul >>                               
+        monitor-on-build: true                                   
+        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app  
+        organization: ${SNYK_CICD_ORGANIZATION}                   
+        
+        # fail-on-issues: << parameters.fail_if_vul >>
+        # monitor-on-build: false
+        # severity-threshold: critical
+        # token-variable: SNYK_TOKEN
 
   scan_build_docker_image:
     parameters:
