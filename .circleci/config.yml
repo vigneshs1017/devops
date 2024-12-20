@@ -13,6 +13,7 @@ jobs:
       - image: cimg/node:lts
       steps:
       - checkout
+      - setup_remote_docker
       - snyk/scan:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                                 
