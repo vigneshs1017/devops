@@ -5,22 +5,19 @@ orbs:
 
 jobs:
   secret_scan:
-     parameters:
+    executor: default
+    parameters:
       fail_if_vul:
         type: boolean
         default: false
-      docker:
-      - image: cimg/node:lts
-      steps:
+    steps:
       - checkout
-      - setup_remote_docker
       - snyk/scan:
-        token-variable: SNYK_TOKEN                          
-        severity-threshold: high                                 
-        fail-on-issues: << parameters.fail_if_vul >> 
-        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
-        monitor-on-build: true                                   
-        additional-arguments: "--scan=secret"
+          token-variable: SNYK_TOKEN
+          severity-threshold: high
+          fail-on-issues: << parameters.fail_if_vul >>
+          monitor-on-build: true
+          additional-arguments: "--scan=secret --detection-depth=3"
     
   scan_application:
     parameters:
@@ -74,6 +71,20 @@ jobs:
 workflows:
   build:
     jobs:
+      - secret_scan:
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+                
       - scan_application:
           name: Application-Scan-Pre-Prods
           fail_if_vul: true
