@@ -4,23 +4,20 @@ orbs:
   snyk: snyk/snyk@1.4.0
 
 jobs:
-  secret_scan:
+  SAST:
     docker:
-        - image: circleci/buildpack-deps:stretch
+        - image: snyk/snyk:latest
     parameters:
       fail_if_vul:
         type: boolean
         default: false
     steps:
       - checkout
-      - setup_remote_docker
-      - snyk/scan:
-          token-variable: SNYK_TOKEN
-          severity-threshold: high
-          fail-on-issues: << parameters.fail_if_vul >>
-          monitor-on-build: true
-          additional-arguments: "code test --severity-threshold=high"
-    
+      - run:
+        command: |
+          snyk auth ${SNYK_TOKEN}
+          snyk code test 
+      
   scan_application:
     parameters:
       fail_if_vul:
@@ -39,7 +36,7 @@ jobs:
         fail-on-issues: << parameters.fail_if_vul >> 
         project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
         monitor-on-build: true                                   
-        additional-arguments: "--scan=secret --detection-depth=10"
+        additional-arguments: "--print-deps --detection-depth=3 --json-file-output=vuln.json"
         
   scan_build_docker_image:
     parameters:
@@ -73,7 +70,8 @@ jobs:
 workflows:
   build:
     jobs:
-      - secret_scan:
+      - SAST:
+          name: SAST
           fail_if_vul: true
           filters:
             branches:
@@ -100,6 +98,8 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+          requires:
+             - SAST
 
       - scan_application:
           name: Application-Scan-Development
@@ -111,6 +111,8 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+          requires:
+             - SAST
 
       - scan_build_docker_image:
           name: Image-Scan-Development
@@ -124,6 +126,7 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
             - Application-Scan-Development
+            - SAST
 
       - scan_build_docker_image:
           name: Image-Scan-Pre-Prod/Production
@@ -140,3 +143,4 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
             - Application-Scan-Pre-Prods
+            - SAST
