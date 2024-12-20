@@ -19,7 +19,7 @@ jobs:
             pwd
             ls
             snyk auth ${SNYK_TOKEN}
-            snyk code test --severity-threshold=high --fail-on=none --org=26e41c27-0e9f-4aec-9222-d1f583764ec6
+            snyk code test --severity-threshold=high --fail-on=none
             
   scan_application:
     parameters:
