@@ -16,10 +16,8 @@ jobs:
       - run:
           name: SAST
           command: |
-            pwd
-            ls
             snyk auth ${SNYK_TOKEN}
-            snyk code test --severity-threshold=high
+            snyk code test --severity-threshold=high --org=26e41c27-0e9f-4aec-9222-d1f583764ec6
             
   scan_application:
     parameters:
@@ -89,7 +87,7 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
                 
       - scan_application:
-          name: Application-Scan-Pre-Prods
+          name: Application-Dependencies-Scan-Pre-Prods
           fail_if_vul: true
           filters:
             branches:
@@ -105,7 +103,7 @@ workflows:
              - SAST
 
       - scan_application:
-          name: Application-Scan-Development
+          name: Application-Dependencies-Scan-Development
           fail_if_vul: false
           filters:
             branches:
@@ -128,7 +126,7 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - Application-Scan-Development
+            - Application-Dependencies-Scan-Development
             - SAST
 
       - scan_build_docker_image:
@@ -145,5 +143,5 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - Application-Scan-Pre-Prods
+            - Application-Dependencies-Scan-Pre-Prods
             - SAST
