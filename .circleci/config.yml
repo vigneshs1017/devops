@@ -5,13 +5,15 @@ orbs:
 
 jobs:
   secret_scan:
-    executor: default
+    docker:
+        - image: circleci/buildpack-deps:stretch
     parameters:
       fail_if_vul:
         type: boolean
         default: false
     steps:
       - checkout
+      - setup_remote_docker
       - snyk/scan:
           token-variable: SNYK_TOKEN
           severity-threshold: high
