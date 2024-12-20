@@ -4,6 +4,21 @@ orbs:
   snyk: snyk/snyk@1.4.0
 
 jobs:
+  secret_scan:
+     parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+      steps:
+      - checkout
+      - snyk/scan:
+        token-variable: SNYK_TOKEN                          
+        severity-threshold: high|critical                                  
+        fail-on-issues: << parameters.fail_if_vul >> 
+        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
+        monitor-on-build: true                                   
+        additional-arguments: "--scan=secret --detection-depth=3"
+    
   scan_application:
     parameters:
       fail_if_vul:
@@ -18,8 +33,9 @@ jobs:
         command: npm install
     - snyk/scan:
         token-variable: SNYK_TOKEN                          
-        severity-threshold: high                                  
-        fail-on-issues: << parameters.fail_if_vul >>  
+        severity-threshold: high|critical                                 
+        fail-on-issues: << parameters.fail_if_vul >> 
+        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
         monitor-on-build: true                                   
         additional-arguments: "--detection-depth=10"
         
@@ -42,6 +58,7 @@ jobs:
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
           monitor-on-build: true
           severity-threshold: critical
           target-file: Dockerfile
