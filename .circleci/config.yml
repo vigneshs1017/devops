@@ -50,7 +50,7 @@ jobs:
           region: AWS_REGION
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
-          tag: 0.1.<< pipeline.number >>
+          tag: $CIRCLE_BRANCH-<< pipeline.number >>
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:$CIRCLE_BRANCH-<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
