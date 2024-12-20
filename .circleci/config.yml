@@ -20,8 +20,7 @@ jobs:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                                  
         fail-on-issues: << parameters.fail_if_vul >>  
-        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
-        monitor-on-build: true                                   
+        monitor-on-build: false                                   
         additional-arguments: "--detection-depth=10"
         
   scan_build_docker_image:
