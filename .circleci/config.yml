@@ -17,7 +17,7 @@ jobs:
           name: SAST
           command: |
             snyk auth ${SNYK_TOKEN}
-            snyk code test --severity-threshold=high -d
+            snyk code test --severity-threshold=high 
             
   scan_application:
     parameters:
