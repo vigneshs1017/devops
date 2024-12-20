@@ -33,7 +33,7 @@ jobs:
         fail-on-issues: << parameters.fail_if_vul >> 
         project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
         monitor-on-build: true                                   
-        additional-arguments: "--print-deps --detection-depth=10 prune-repeated-subdependencies"
+        additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
         
   scan_build_docker_image:
     parameters:
