@@ -6,7 +6,7 @@ orbs:
 jobs:
   SAST:
     docker:
-      - image: snyk/snyk:latest
+      - image: snyk/snyk:alpine
     parameters:
       fail_if_vul:
         type: boolean
