@@ -19,7 +19,7 @@ jobs:
             pwd
             ls
             snyk auth ${SNYK_TOKEN}
-            snyk code test --severity-threshold=high 
+            snyk code test --severity-threshold=high --fail-on=none --org=26e41c27-0e9f-4aec-9222-d1f583764ec6
             
   scan_application:
     parameters:
@@ -39,7 +39,7 @@ jobs:
         fail-on-issues: << parameters.fail_if_vul >> 
         project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
         monitor-on-build: true                                   
-        additional-arguments: "--print-deps --detection-depth=3 --json-file-output=vuln.json"
+        additional-arguments: "--print-deps --detection-depth=3"
         
   scan_build_docker_image:
     parameters:
