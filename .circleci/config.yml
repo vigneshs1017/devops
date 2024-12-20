@@ -17,7 +17,7 @@ jobs:
           name: SAST
           command: |
             snyk auth ${SNYK_TOKEN}
-            snyk code test -d all --severity-threshold=high
+            snyk code test all --severity-threshold=high -d 
             if [[ << parameters.fail_if_vul >> == true ]]; then
               snyk code test --severity-threshold=high --fail-on=high
             fi 
