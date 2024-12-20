@@ -7,16 +7,11 @@ jobs:
   SAST:
     docker:
       - image: snyk/snyk:alpine
-    parameters:
-      fail_if_vul:
-        type: boolean
-        default: false
     steps:
       - checkout
       - run:
           name: SAST
           command: |
-            snyk code test --help
             snyk auth ${SNYK_TOKEN}
             snyk code test --severity-threshold=high
             
@@ -70,11 +65,10 @@ jobs:
           tag: 0.1.<< pipeline.number >>  
   
 workflows:
-  build:
+  DevSecOPs:
     jobs:
       - SAST:
           name: SAST
-          fail_if_vul: true
           filters:
             branches:
               only:
