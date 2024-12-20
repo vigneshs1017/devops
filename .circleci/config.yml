@@ -6,7 +6,7 @@ orbs:
 jobs:
   SAST:
     docker:
-        - image: snyk/snyk:latest
+      - image: snyk/snyk:latest
     parameters:
       fail_if_vul:
         type: boolean
@@ -14,10 +14,13 @@ jobs:
     steps:
       - checkout
       - run:
-        name: SAST
-        command: |
-          snyk auth ${SNYK_TOKEN}
-          snyk code test 
+          name: SAST
+          command: |
+            snyk auth ${SNYK_TOKEN}
+            snyk code test --severity-threshold=high
+            if [[ << parameters.fail_if_vul >> == true ]]; then
+              snyk code test --severity-threshold=high --fail-on=high
+            fi 
       
   scan_application:
     parameters:
