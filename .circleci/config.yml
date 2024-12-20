@@ -16,7 +16,6 @@ jobs:
       - run:
           name: SAST
           command: |
-            npm install -g snyk
             snyk auth ${SNYK_TOKEN}
             snyk code test all --severity-threshold=high -d
             
