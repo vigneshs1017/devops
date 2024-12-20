@@ -42,8 +42,7 @@ jobs:
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
-          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container
-          monitor-on-build: false
+          monitor-on-build: true
           severity-threshold: critical
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
