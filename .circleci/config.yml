@@ -20,7 +20,7 @@ jobs:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                                  
         fail-on-issues: << parameters.fail_if_vul >>  
-        monitor-on-build: false                                   
+        monitor-on-build: true                                   
         additional-arguments: "--detection-depth=10"
         
   scan_build_docker_image:
