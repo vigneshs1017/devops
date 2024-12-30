@@ -1,59 +1,96 @@
 version: 2.1
+
 orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
-  node: circleci/node@4.2.0
 
 jobs:
+  SAST:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+    docker:
+      - image: snyk/snyk:alpine
+    steps:
+      - checkout
+      - run:
+          name: SAST
+          command: |
+             snyk auth ${SNYK_TOKEN}
+             snyk code test --severity-threshold=high || STATUS=$?
+             if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
+               echo "Build failed due to vulnerabilities"
+               exit 1
+             else
+               echo "Build continues despite vulnerabilities"
+             fi
+            
   scan_application:
     parameters:
       fail_if_vul:
         type: boolean
         default: false
     docker:
-    - image: cimg/node:14.16.0
+    - image: cimg/node:lts
     steps:
     - checkout
     - run:
         name: Sync code for application
         command: npm install
     - snyk/scan:
-        fail-on-issues: << parameters.fail_if_vul >>
-        monitor-on-build: false
-        severity-threshold: critical
-
+        token-variable: SNYK_TOKEN                          
+        severity-threshold: high                              
+        fail-on-issues: << parameters.fail_if_vul >> 
+        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
+        monitor-on-build: true                                   
+        additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
+        
   scan_build_docker_image:
     parameters:
       fail_if_vul:
         type: boolean
         default: false
-    machine:
-      image: ubuntu-2204:edge
+    docker:
+        - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - setup_remote_docker
       - aws-ecr/build-image:
           ecr-login: true
           region: AWS_REGION
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
-          tag: 0.1.<< pipeline.number >>
+          tag: $CIRCLE_BRANCH-<< pipeline.number >>
       - snyk/scan:
-          docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
+          docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:$CIRCLE_BRANCH-<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
-          monitor-on-build: false
-          severity-threshold: critical
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
+          monitor-on-build: true
+          severity-threshold: high
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
       - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
-          tag: 0.1.<< pipeline.number >>  
+          tag: $CIRCLE_BRANCH-<< pipeline.number >>  
   
 workflows:
-  build:
+  DevSecOps:
     jobs:
-      - scan_application:
-          name: Application-Scan-Pre-Prods
+      - SAST:
+          name: SAST-Development
+          fail_if_vul: false
+          filters:
+            branches:
+              only:
+                - acc
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+      - SAST:
+          name: SAST-Pre-production
           fail_if_vul: true
           filters:
             branches:
@@ -65,9 +102,25 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+                
+      - scan_application:
+          name: Application-Dependencies-Scan-Pre-Prods
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+          requires:
+             - SAST-Pre-production
 
       - scan_application:
-          name: Application-Scan-Development
+          name: Application-Dependencies-Scan-Development
           fail_if_vul: false
           filters:
             branches:
@@ -76,6 +129,8 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
+          requires:
+             - SAST-Development
 
       - scan_build_docker_image:
           name: Image-Scan-Development
@@ -88,7 +143,8 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - Application-Scan-Development
+            - Application-Dependencies-Scan-Development
+            - SAST-Development
 
       - scan_build_docker_image:
           name: Image-Scan-Pre-Prod/Production
@@ -104,4 +160,5 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-            - Application-Scan-Pre-Prods
+            - Application-Dependencies-Scan-Pre-Prods
+            - SAST-Pre-production
