@@ -5,6 +5,10 @@ orbs:
 
 jobs:
   SAST:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
     docker:
       - image: snyk/snyk:alpine
     steps:
