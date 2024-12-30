@@ -35,7 +35,7 @@ jobs:
     - image: cimg/node:lts
     steps:
     - checkout
-    - run: npm clean-install
+    - run: npm install
     - snyk/scan:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                              
