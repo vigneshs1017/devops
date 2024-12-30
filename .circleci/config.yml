@@ -35,9 +35,7 @@ jobs:
     - image: cimg/node:lts
     steps:
     - checkout
-    - run:
-        name: Sync code for application
-        command: npm install
+    - run: npm install
     - snyk/scan:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                              
