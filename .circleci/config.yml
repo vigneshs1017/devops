@@ -63,7 +63,7 @@ jobs:
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:$CIRCLE_BRANCH-<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
-          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-Docker
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-application
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
