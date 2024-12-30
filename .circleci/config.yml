@@ -40,7 +40,7 @@ jobs:
         command: npm install
     - snyk/scan:
         token-variable: SNYK_TOKEN                          
-        severity-threshold: "high|critical"                              
+        severity-threshold: high                              
         fail-on-issues: << parameters.fail_if_vul >> 
         project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
         monitor-on-build: true                                   
@@ -67,7 +67,7 @@ jobs:
           fail-on-issues: << parameters.fail_if_vul >>
           project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}
           monitor-on-build: true
-          severity-threshold: critical
+          severity-threshold: high
           target-file: Dockerfile
           token-variable: SNYK_TOKEN
       - aws-ecr/push-image:
