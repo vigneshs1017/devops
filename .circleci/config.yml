@@ -40,6 +40,7 @@ jobs:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                              
         fail-on-issues: << parameters.fail_if_vul >>
+        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app
         monitor-on-build: true                                   
         additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
         
@@ -62,6 +63,7 @@ jobs:
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:$CIRCLE_BRANCH-<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
