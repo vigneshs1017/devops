@@ -1,14 +1,16 @@
 version: 2.1
+
+parameters:
+  fail_if_vul:
+     type: boolean
+     default: false
+
 orbs:
   aws-ecr: circleci/aws-ecr@7.2.0
   snyk: snyk/snyk@1.4.0
 
 jobs:
   SAST:
-    parameters:
-      fail_if_vul:
-        type: boolean
-        default: false
     docker:
       - image: snyk/snyk:alpine
     steps:
@@ -26,10 +28,6 @@ jobs:
              fi
             
   scan_application:
-    parameters:
-      fail_if_vul:
-        type: boolean
-        default: false
     docker:
     - image: cimg/node:lts
     steps:
@@ -46,10 +44,6 @@ jobs:
         additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
         
   scan_build_docker_image:
-    parameters:
-      fail_if_vul:
-        type: boolean
-        default: false
     docker:
         - image: circleci/buildpack-deps:stretch
     steps:
@@ -78,13 +72,26 @@ workflows:
   DevSecOps:
     jobs:
       - SAST:
-          name: SAST
+          name: SAST-Development
           fail_if_vul: false
           filters:
             branches:
               only:
                 - acc
                 - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+      - SAST:
+          name: SAST-Pre-production
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
@@ -103,7 +110,7 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-             - SAST
+             - SAST-Pre-production
 
       - scan_application:
           name: Application-Dependencies-Scan-Development
@@ -116,7 +123,7 @@ workflows:
               ignore:
                 - /v\d+\.\d+\.\d+$/
           requires:
-             - SAST
+             - SAST-Development
 
       - scan_build_docker_image:
           name: Image-Scan-Development
@@ -130,7 +137,7 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
             - Application-Dependencies-Scan-Development
-            - SAST
+            - SAST-Development
 
       - scan_build_docker_image:
           name: Image-Scan-Pre-Prod/Production
@@ -147,4 +154,4 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
             - Application-Dependencies-Scan-Pre-Prods
-            - SAST
+            - SAST-Pre-production
