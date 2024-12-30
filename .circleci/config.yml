@@ -79,10 +79,7 @@ workflows:
           filters:
             branches:
               only:
-                - stage
                 - acc
-                - main
-                - prod
                 - dev
             tags:
               ignore:
