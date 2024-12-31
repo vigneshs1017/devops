@@ -19,7 +19,6 @@ jobs:
           command: |
              snyk auth ${SNYK_TOKEN}
              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" || STATUS=$?
-             snyk monitor --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST"
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
                exit 1
