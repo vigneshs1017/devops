@@ -25,7 +25,7 @@ jobs:
              else
                echo "Build continues despite vulnerabilities"
              fi
-             snyk monitor --all-projects --org=vigneshs1017
+             snyk monitor --org=vigneshs1017
 
   scan_application:
     parameters:
