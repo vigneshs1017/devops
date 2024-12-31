@@ -67,7 +67,7 @@ jobs:
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
-          project: '${CIRCLE_PROJECT_REPONAME}-Docker
+          project: ${CIRCLE_PROJECT_REPONAME}-Docker
           additional-arguments: "--org=vigneshs1017"
       - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
