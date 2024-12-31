@@ -18,6 +18,7 @@ jobs:
           name: SAST
           command: |
              snyk auth ${SNYK_TOKEN}
+             snyk monitor --all-projects --org=vigneshs1017
              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" || STATUS=$?
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
