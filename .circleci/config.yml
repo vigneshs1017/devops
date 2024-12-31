@@ -18,7 +18,7 @@ jobs:
           name: SAST
           command: |
              snyk auth ${SNYK_TOKEN}
-             snyk code test --severity-threshold=high --org=26e41c27-0e9f-4aec-9222-d1f583764ec6 --json-file-output=vuln.json || STATUS=$?
+             snyk code test --severity-threshold=high --org=vigneshs1017 || STATUS=$?
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
                exit 1
@@ -40,7 +40,6 @@ jobs:
         token-variable: SNYK_TOKEN                          
         severity-threshold: high                              
         fail-on-issues: << parameters.fail_if_vul >>
-        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app
         monitor-on-build: true                                   
         additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
         
@@ -63,7 +62,6 @@ jobs:
       - snyk/scan:
           docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:$CIRCLE_BRANCH-<< pipeline.number >>
           fail-on-issues: << parameters.fail_if_vul >>
-          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
