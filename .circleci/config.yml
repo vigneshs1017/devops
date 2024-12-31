@@ -18,38 +18,40 @@ jobs:
           name: SAST
           command: |
              snyk auth ${SNYK_TOKEN}
-             snyk code test --severity-threshold=high --org=vigneshs1017 || STATUS=$?
+             snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" || STATUS=$?
+             snyk monitor --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST"
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
                exit 1
              else
                echo "Build continues despite vulnerabilities"
              fi
-            
+
   scan_application:
     parameters:
       fail_if_vul:
         type: boolean
         default: false
     docker:
-    - image: cimg/node:lts
+      - image: cimg/node:lts
     steps:
-    - checkout
-    - run: npm install
-    - snyk/scan:
-        token-variable: SNYK_TOKEN                          
-        severity-threshold: high                              
-        fail-on-issues: << parameters.fail_if_vul >>
-        monitor-on-build: true                                   
-        additional-arguments: "--print-deps --detection-depth=10 --prune-repeated-subdependencies"
-        
+      - checkout
+      - run: npm install
+      - snyk/scan:
+          token-variable: SNYK_TOKEN
+          severity-threshold: high
+          fail-on-issues: << parameters.fail_if_vul >>
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-Dependencies
+          monitor-on-build: true
+          additional-arguments: "--org=vigneshs1017 --print-deps --detection-depth=10 --prune-repeated-subdependencies"
+
   scan_build_docker_image:
     parameters:
       fail_if_vul:
         type: boolean
         default: false
     docker:
-        - image: circleci/buildpack-deps:stretch
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
       - setup_remote_docker
@@ -65,12 +67,13 @@ jobs:
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
-          token-variable: SNYK_TOKEN
+          project: '${CIRCLE_PROJECT_REPONAME}-Docker
+          additional-arguments: "--org=vigneshs1017"
       - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
-          tag: $CIRCLE_BRANCH-<< pipeline.number >>  
-  
+          tag: $CIRCLE_BRANCH-<< pipeline.number >>
+
 workflows:
   DevSecOps:
     jobs:
@@ -98,7 +101,6 @@ workflows:
             tags:
               ignore:
                 - /v\d+\.\d+\.\d+$/
-                
       - scan_application:
           name: Application-Dependencies-Scan-Pre-Prods
           fail_if_vul: true
@@ -114,7 +116,6 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
              - SAST-Pre-production
-
       - scan_application:
           name: Application-Dependencies-Scan-Development
           fail_if_vul: false
@@ -127,7 +128,6 @@ workflows:
                 - /v\d+\.\d+\.\d+$/
           requires:
              - SAST-Development
-
       - scan_build_docker_image:
           name: Image-Scan-Development
           fail_if_vul: false
@@ -141,7 +141,6 @@ workflows:
           requires:
             - Application-Dependencies-Scan-Development
             - SAST-Development
-
       - scan_build_docker_image:
           name: Image-Scan-Pre-Prod/Production
           fail_if_vul: true
