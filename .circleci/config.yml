@@ -25,7 +25,6 @@ jobs:
              else
                echo "Build continues despite vulnerabilities"
              fi
-             snyk code monitor --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}"
 
   scan_application:
     parameters:
@@ -36,7 +35,10 @@ jobs:
       - image: cimg/node:lts
     steps:
       - checkout
-      - run: npm install
+      - run: 
+          command: |
+             npm install
+             snyk code monitor --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}"
       - snyk/scan:
           token-variable: SNYK_TOKEN
           severity-threshold: high
