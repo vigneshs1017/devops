@@ -18,7 +18,7 @@ jobs:
           name: SAST
           command: |
              snyk auth ${SNYK_TOKEN}
-             snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" || STATUS=$?
+             snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" --sarif || STATUS=$?
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
                exit 1
@@ -35,10 +35,7 @@ jobs:
       - image: cimg/node:lts
     steps:
       - checkout
-      - run: 
-          command: |
-             npm install
-             snyk code monitor --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}"
+      - run: npm install
       - snyk/scan:
           token-variable: SNYK_TOKEN
           severity-threshold: high
