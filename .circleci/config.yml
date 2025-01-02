@@ -28,7 +28,7 @@ jobs:
       - run:
           name: SAST-Monitor
           command: |
-            snyk monitor --org=vigneshs1017
+            snyk monitor --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}"
              
 
   scan_application:
