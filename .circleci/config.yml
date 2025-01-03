@@ -28,7 +28,7 @@ jobs:
               else
                   echo "Build continues despite vulnerabilities"
               fi
-              snyk code monitor --severity-threshold=high --org=vigneshs1017"
+              snyk code monitor --severity-threshold=high --org=vigneshs1017
 
            
                       
