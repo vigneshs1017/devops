@@ -28,7 +28,7 @@ jobs:
               else
                   echo "Build continues despite vulnerabilities"
               fi
-              snyk code monitor --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST"
+              snyk code monitor --severity-threshold=high --org=vigneshs1017"
 
            
                       
