@@ -11,13 +11,17 @@ jobs:
         type: boolean
         default: false
     docker:
-      - image: snyk/snyk:alpine
+      - image: cimg/node:lts
     steps:
       - checkout
+      - run: npm ci
+      - snyk/install
       - run:
-          name: SAST
+          command: snyk version
+          name: Which version of snyk is installed
+      - run:
+          name: Run code scan
           command: |
-             snyk auth ${SNYK_TOKEN}
              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" --sarif || STATUS=$?
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
