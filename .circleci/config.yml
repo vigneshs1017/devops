@@ -14,7 +14,6 @@ jobs:
       - image: cimg/node:lts
     steps:
       - checkout
-      - run: npm install
       - snyk/install
       - run:
           command: snyk version
