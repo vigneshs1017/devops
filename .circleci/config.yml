@@ -18,7 +18,6 @@ jobs:
           token-variable: SNYK_TOKEN
           severity-threshold: high
           fail-on-issues: << parameters.fail_if_vul >>
-          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-SAST
           additional-arguments: "--org=vigneshs1017"
                                        
   scan_application:
