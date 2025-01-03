@@ -14,16 +14,16 @@ jobs:
           build:
               docker:
                   - image: cimg/node:lts
-                  steps:
-                        - checkout
-                        - run: npm ci
-                        - snyk/install
-                        - run:
-                            command: snyk version
-                            name: Which version of snyk is installed
-                        - run:
-                            command: snyk code test
-                            name: Run code scan
+              steps:
+                - checkout
+                - run: npm ci
+                - snyk/install
+                - run:
+                    command: snyk version
+                    name: Which version of snyk is installed
+                - run:
+                    command: snyk code test
+                    name: Run code scan
 
           
   scan_application:
