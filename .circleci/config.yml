@@ -19,7 +19,6 @@ jobs:
           severity-threshold: high
           fail-on-issues: << parameters.fail_if_vul >>
           project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-SAST
-          monitor-on-build: true
           additional-arguments: "--org=vigneshs1017"
                                        
   scan_application:
