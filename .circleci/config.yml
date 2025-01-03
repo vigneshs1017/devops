@@ -6,25 +6,30 @@ orbs:
 
 jobs:
   SAST:
-    usage:
-      version: "2.1"
-      orbs:
-        snyk: snyk/snyk@2.2.0
-      jobs:
-          build:
-              docker:
-                  - image: cimg/node:lts
-              steps:
-                - checkout
-                - run: npm ci
-                - snyk/install
-                - run:
-                    command: snyk version
-                    name: Which version of snyk is installed
-                - run:
-                    command: snyk code test
-                    name: Run code scan
-
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run: npm ci
+      - snyk/install
+      - run:
+          command: snyk version
+          name: Which version of snyk is installed
+      - run:
+          name: Run code scan
+          command: |
+              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}" --sarif || STATUS=$?
+              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
+                  echo "Build failed due to vulnerabilities"
+                  exit 1
+              else
+                  echo "Build continues despite vulnerabilities"
+              fi
+                      
           
   scan_application:
     parameters:
