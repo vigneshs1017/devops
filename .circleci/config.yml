@@ -6,21 +6,24 @@ orbs:
 
 jobs:
   SAST:
-    parameters:
-      fail_if_vul:
-        type: boolean
-        default: false
-    docker:
-      - image: cimg/node:lts
-    steps:
-      - checkout
-      - synk/test:
-          token-variable: SNYK_TOKEN
-          severity-threshold: high
-          fail-on-issues: << parameters.fail_if_vul >>
-          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-Dependencies
-          monitor-on-build: true
-          additional-arguments: "--org=vigneshs1017"
+    usage:
+      version: "2.1"
+      orbs:
+        snyk: snyk/snyk@2.2.0
+      jobs:
+          build:
+              docker:
+                  - image: cimg/node:lts
+                  steps:
+                        - checkout
+                        - run: npm ci
+                        - snyk/install
+                        - run:
+                            command: snyk version
+                            name: Which version of snyk is installed
+                        - run:
+                            command: snyk code test
+                            name: Run code scan
 
           
   scan_application:
