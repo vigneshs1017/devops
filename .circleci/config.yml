@@ -15,6 +15,7 @@ jobs:
     steps:
       - checkout
       - snyk/install
+      - run: npm install
       - run:
           command: snyk version
           name: Which version of snyk is installed
