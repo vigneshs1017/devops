@@ -15,26 +15,20 @@ jobs:
     steps:
       - checkout
       - snyk/install
-      - run: npm install
       - run:
           command: snyk version
           name: Which version of snyk is installed
       - run:
           name: Run code scan
           command: |
-              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST" || STATUS=$?
+              snyk code test --severity-threshold=high --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SASt" --json | snyk monitor --code --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST" || STATUS=$?
               if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                   echo "Build failed due to vulnerabilities"
                   exit 1
               else
                   echo "Build continues despite vulnerabilities"
               fi
-      - run:
-          name: Snapshot results to Snyk dashboard
-          command: snyk monitor --org=vigneshs1017 --project-name="${CIRCLE_PROJECT_REPONAME}-SAST"
-           
-                      
-          
+                                       
   scan_application:
     parameters:
       fail_if_vul:
