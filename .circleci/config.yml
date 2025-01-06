@@ -18,7 +18,7 @@ jobs:
           name: SAST
           command: |
              snyk auth ${SNYK_TOKEN}
-             snyk code test --severity-threshold=high --project-id=413890a5-f5d4-463b-a3ab-6e48e812556e || STATUS=$?
+             snyk code test --severity-threshold=high --project-id=a9bf67f2-49c5-4e69-820c-48a791711b20 || STATUS=$?
              if [ "<<parameters.fail_if_vul>>" = "true" ] && [ "$STATUS" -ne 0 ]; then
                echo "Build failed due to vulnerabilities"
                exit 1
