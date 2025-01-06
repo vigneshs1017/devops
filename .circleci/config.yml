@@ -42,7 +42,7 @@ jobs:
           severity-threshold: high
           fail-on-issues: << parameters.fail_if_vul >>
           monitor-on-build: true
-          additional-arguments: "--org=vigneshs1017 --print-deps --detection-depth=10 --prune-repeated-subdependencies --target-reference="$(git branch --show-current)""
+          additional-arguments: "--org=vigneshs1017 --target-reference=$(git branch --show-current) --print-deps --detection-depth=10 --prune-repeated-subdependencies "
 
   scan_build_docker_image:
     parameters:
@@ -66,7 +66,7 @@ jobs:
           monitor-on-build: true
           severity-threshold: high
           target-file: Dockerfile
-          additional-arguments: "--org=vigneshs1017 --target-reference="$(git branch --show-current)""
+          additional-arguments: "--org=vigneshs1017 --target-reference=$(git branch --show-current)"
       - aws-ecr/push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $AWS_ECR_REPO
