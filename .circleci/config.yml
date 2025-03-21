@@ -1,0 +1,105 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@7.2.0
+  snyk: snyk/snyk@1.4.0
+  node: circleci/node@4.2.0
+
+jobs:
+  scan_application:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+    docker:
+    - image: cimg/node:14.16.0
+    steps:
+    - checkout
+    - run:
+        name: Sync code for application
+        command: npm install
+    - snyk/scan:
+        fail-on-issues: << parameters.fail_if_vul >>
+        monitor-on-build: false
+        severity-threshold: critical
+
+  scan_build_docker_image:
+    parameters:
+      fail_if_vul:
+        type: boolean
+        default: false
+    machine:
+      image: ubuntu-2204:edge
+    steps:
+      - checkout
+      - aws-ecr/build-image:
+          ecr-login: true
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPO
+          tag: 0.1.<< pipeline.number >>
+      - snyk/scan:
+          docker-image-name: $AWS_ECR_ACCOUNT_URL/$AWS_ECR_REPO:0.1.<< pipeline.number >>
+          fail-on-issues: << parameters.fail_if_vul >>
+          monitor-on-build: false
+          severity-threshold: critical
+          target-file: Dockerfile
+          token-variable: SNYK_TOKEN
+      - aws-ecr/push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $AWS_ECR_REPO
+          tag: 0.1.<< pipeline.number >>  
+  
+workflows:
+  build:
+    jobs:
+      - scan_application:
+          name: Application-Scan-Pre-Prods
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
+      - scan_application:
+          name: Application-Scan-Development
+          fail_if_vul: false
+          filters:
+            branches:
+              only:
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+
+      - scan_build_docker_image:
+          fail_if_vul: false
+          filters:
+            branches:
+              only:
+                - dev
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+          requires:
+            - Application-Scan-Development
+
+      - scan_build_docker_image:
+          fail_if_vul: true
+          filters:
+            branches:
+              only:
+                - stage
+                - acc
+                - main
+                - prod
+            tags:
+              ignore:
+                - /v\d+\.\d+\.\d+$/
+          requires:
+            - Application-Scan-Pre-Prods
